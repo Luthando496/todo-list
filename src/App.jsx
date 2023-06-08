@@ -16,6 +16,7 @@ function App() {
     setName('')
     console.log(crypto.randomUUID())
   }
+  const completed = todos.filter(todo=>todo.isCompleted).length
 
   const toggle =(id)=>{
     setTodos(todos.map(todo=>{
@@ -42,6 +43,10 @@ function App() {
         Create <FaPlusCircle className='text-sky-500 text-2xl' />
       </button>
       </div>
+      <div className="flex justify-between items-center mt-7 w-[60%] mx-auto">
+        <h2 className="text-blue-500">Created Tasks <span className='bg-gray-400 px-2 py-1 rounded-lg'>{todos.length}</span></h2>
+        <h2 className="text-orange-700 font-semibold">Completed <span className='bg-gray-400 rounded-lg px-2 py-1'>{completed} of {todos.length}</span></h2>
+   </div>
 
 
       <div className="mt-[5rem] flex justify-center w-full">
