@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {FaPlusCircle} from 'react-icons/fa'
 import {BsTrash} from 'react-icons/bs'
+
+
+const LOCALSTORAGEKEY = 'todo-list'
 
 function App() {
   let [name, setName] = useState('')
@@ -12,20 +15,33 @@ function App() {
     if(!name){
       return;
     }
-    setTodos([...todos, {task:name,isCompleted:false,id:crypto.randomUUID()}])
+    saveToLocalStorage([...todos, {task:name,isCompleted:false,id:crypto.randomUUID()}])
     setName('')
     console.log(crypto.randomUUID())
+  }
+
+  const saveToLocalStorage = (newTask) => {
+    setTodos(newTask)
+    localStorage.setItem(LOCALSTORAGEKEY,JSON.stringify(newTask))
   }
   const completed = todos.filter(todo=>todo.isCompleted).length
 
   const toggle =(id)=>{
-    setTodos(todos.map(todo=>{
+    saveToLocalStorage(todos.map(todo=>{
       if(todo.id === id){
         todo.isCompleted = !todo.isCompleted
       }
       return todo;
     }))
   }
+
+
+  useEffect(()=>{
+    const localTodos = JSON.parse(localStorage.getItem(LOCALSTORAGEKEY))
+    if(localTodos){
+      setTodos(localTodos)
+    }
+  },[])
   
 
   return (
@@ -55,7 +71,7 @@ function App() {
           <li key={item.id} className='rounded-xl bg-yellow-800 shadow-lg  flex items-center justify-between py-3 px-10 lg:w-[30rem] w-[15rem] sm:w-[19rem]'>
             <span onClick={()=>toggle(item.id)} className={`rounded-full cursor-pointer p-2 border-2 ${item.isCompleted && 'bg-red-800'} border-red-800 mr-4`}></span>
             <span className={`text-xl tracking-[4px] ${item.isCompleted && 'line-through'} font-semibold text-white`}>{item.task}</span>
-            <BsTrash className='text-4xl cursor-pointer font-bold' onClick={() => setTodos(todos.filter(todo=>todo.id !== item.id))}/>
+            <BsTrash className='text-4xl cursor-pointer font-bold' onClick={() => saveToLocalStorage(todos.filter(todo=>todo.id !== item.id))}/>
           </li>
         ))}
           
